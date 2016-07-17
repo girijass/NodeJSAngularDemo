@@ -1,0 +1,36 @@
+{
+  "name": "angular-clear-button",
+  "main": "angular-clear-button.js",
+  "homepage": "https://github.com/tushariscoolster/angular-clear-button",
+  "authors": [
+    "Tushar Borole <tushariscoolster@gmail.com>"
+  ],
+  "description": "ios style clear button for angular js",
+  "keywords": [
+    "clearbutton",
+    "ios",
+    "clear",
+    "button",
+    "angular",
+    "js",
+    "clear",
+    "button"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "_release": "c585459568",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "c585459568a9265d818c494129f0a5698b8da44b"
+  },
+  "_source": "https://github.com/tushariscoolster/angular-clear-button.git",
+  "_target": "*",
+  "_originalSource": "angular-clear-button"
+}

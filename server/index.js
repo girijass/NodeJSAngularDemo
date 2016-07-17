@@ -2,7 +2,6 @@
 
 var express = require('express');
 var app = express();
-var ntlm = require('./parallon-express-ntlm');
 var bodyParser = require('body-parser');
 var session = require('express-session');
 var http = require('http');
@@ -26,16 +25,9 @@ var excludeMiddlewareForPath = function(path, middleware) {
     };
 };
 
-app.use(excludeMiddlewareForPath('/healthcheck', ntlm({
-  debug: function() {
-    var args = Array.prototype.slice.apply(arguments);
-    console.log.apply(null, args);
-  },
-  domain: 'HCA',
-  domaincontroller: 'ldap://ldap-nas.hca.corpad.net:3268',
-})));
 
-app.use(excludeMiddlewareForPath('/healthcheck', Authentication.validateUser));
+
+//app.use(excludeMiddlewareForPath('/healthcheck', Authentication.validateUser));
 
 // Setup json parsing and body parser
 var jsonParser = bodyParser.json({limit:'50mb', type:'application/json'});
