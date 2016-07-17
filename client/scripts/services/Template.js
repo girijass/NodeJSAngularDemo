@@ -5,9 +5,17 @@ angular.module('appealAssistant')
       getTemplates: function (type) {
         var deferred = $q.defer();
         var obj = [];
-       if(type === 'MC') {
-         $http.get('assets/document.json').success(function (data) {
-           obj = data;
+        console.log("Type is "+type);
+       if(type === 'BAR') {
+         console.log("Calling /api/getBarChartData");
+         $http.get('/api/getBarChartData').success(function (data) {
+           obj = data.graphdata;
+           deferred.resolve(obj);
+         });
+       }else if(type === 'PIE'){
+         console.log("Calling /api/getPieChartData");
+         $http.get('/api/getPieChartData').success(function (data) {
+           obj = data.graphdata;
            deferred.resolve(obj);
          });
        }else{

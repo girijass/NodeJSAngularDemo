@@ -13,154 +13,31 @@
         <!--<select ng-options="template as size.name for size in templateTypes | orderBy:'code' " ng-model="item" ng-change="update()"></select> -->
       </div>
       <div class="box">
-        <div align="left" style="margin-left:10px;">
-          <a href ng-click="uploadFile()"> <button
-            class="box btn btn-primary" data-toggle="control-sidebar">Upload
-          </button></a>
-        </div>
+
         <div class="box-body extra-padding-top">
-          <div>
-            <table datatable="ng" dt-instance="dtInstance" dt-options="dtOptions" class="table table-bordered table-striped">
-              <thead>
-              <tr class="info">
-                <th>Appeal Letter Type</th>
-                <th>First Level Appeal Letter</th>
-                <th>Second Level Appeal Letter</th>
-                <th>Full Denial / Partial Denial</th>
-                <th>Patient Type</th>
-                <th>Criteria / Definition</th>
-                <th>Version Date</th>
-                <th>InterQua Status</th>
-                <th>User</th>
-              </tr>
-              </thead>
-              <tbody>
-              <tr ng-repeat="(index, medicare) in medicareTemplateForms">
-                <td>{{medicare.AppealLetterType}}</td>
-                <td><a href ng-click="openLetter(medicare.FirstLevelAppealLetterName)">{{medicare.FirstLevelAppealLetterName}}</a></td>
-                <td><a href ng-click="openLetter(medicare.SecondLevelAppealLetterName)">{{medicare.SecondLevelAppealLetterName}}</a></td>
-                <td>{{medicare.FullDenial_PartialDenial}}</td>
-                <td>{{medicare.PatientType}}</td>
-                <td>{{medicare.Criteria_Definition}}</td>
-                <td>{{medicare.VersionDate | date: 'MM/dd/yy'}}</td>
-                <td>{{medicare.InterQualStatus}}</td>
-                <td>{{medicare.User}}</td>
+          
+          <div ng-controller='MainCtrl'>
+            <div ng-switch on="codeValue">
+              <div ng-switch-when=BAR>
+              <nvd3 options='barOptions' data='pieData'></nvd3>
+            </div>
+           <div ng-switch-when='PIE'>
 
-              </tr>
-              </tbody>
-            </table>
+              <nvd3 options='pieOptions' data='pieData'></nvd3>
+           </div>
+              <div ng-switch-default>
 
-            <script type="text/ng-template" id="myModalContent.html">
-              <div class="modal-header">
-                <h3>Appeal Assistant</h3>
-              </div>
-
-              <div class="modal-body">
-
-                <div>
-                  <span class="error" ng-show="error" ng-cloak> {{error}}</span>
-                  <div ng-if="error">
-
-                  </div>
-                </div>
-
-
-                <form name="appealLebelForm" ng-submit="submitActionForm()" novalidate>
-
-                  <div class="form-group col-sm-12"
-                       ng-class="{'has-error' :appealLebelForm.PatientID.$invalid && (appealLebelForm.PatientID.$dirty || submitted)}">
-                    <label><span style="color:#d23340;">*</span>Enter Patient Account Number:</label>
-                    <input type="text" class="form-control" name="PatientID" ng-model="appealLebel.PatientID"
-                           placeholder="Enter Patient Account Number" ng-required="true">
-                    <p ng-show="appealLebelForm.PatientID.$error.required && (appealLebelForm.PatientID.$dirty || submitted)"
-                       class="help-block">Patient Account Number is required.</p>
-                  </div>
-                  <div class="form-group col-sm-12"
-                       ng-class="{'has-error' :appealLebelForm.Unit.$invalid && (appealLebelForm.Unit.$dirty || submitted)}">
-                    <label><span style="color:#d23340;">*</span>Enter Unit Number:</label>
-                    <input type="text" class="form-control" name="Unit" ng-model="appealLebel.Unit"
-                           placeholder="Enter Unit Number" ng-required="true">
-                    <p ng-show="appealLebelForm.Unit.$error.required && (appealLebelForm.Unit.$dirty || submitted)"
-                       class="help-block">Unit Number is required.</p>
-                  </div>
-                    <div class="form-group col-sm-12"
-                         ng-class="{'has-error' :appealLebelForm.IPlan.$invalid && (appealLebelForm.IPlan.$dirty || submitted)}">
-                    <label><span style="color:#d23340;">*</span>Enter IPlan:</label>
-                    <input type="text" class="form-control" name="IPlan" ng-model="appealLebel.IPlan"
-                           placeholder="e.g 12345" ng-required="true">
-                      <p ng-show="appealLebelForm.IPlan.$error.required && (appealLebelForm.IPlan.$dirty || submitted)"
-                         class="help-block">IPlan is required.</p>
-                  </div>
-                  <div>
-                    <button type="submit" class="btn btn-primary" ng-disabled="wait">Download<span ng-if="wait">ing</span> {{letterId}}</span></button>
-                  </div><!-- /end of Top Button Row -->
-
-                </form>
-              </div>
-
-              <div class="modal-footer">
-                <div class="row">
-                  <div class="col-md-6 text-left">
-                    Form ID: <strong>{{letterId}}</strong>
-                  </div>
-                  <div class="col-md-6">
-                    <button class="btn btn-default" ng-click="cancel()" ng-disabled="wait">Go Back to Main Page</button>
-                  </div>
-                </div>
-              </div>
-            </script>
-
-            <script type="text/ng-template" id="uplodModalContent.html">
-              <div class="modal-header">
-                <h3>Appeal Assistant</h3>
-              </div>
-              <div>
-                <span class="error" ng-show="error" ng-cloak> {{error}}</span>
-              </div>
-              <div class="modal-body">
-
-                <form name="uploadForm" ng-submit="submitActionForm()" novalidate>
-
-                  <div class="col-sm-12" style="border-bottom:solid 1px lightgray;padding-bottom:20px;">
-                    <h4 style="margin-left:10px;">Upload</h4>
-
-                    <input type="file" ngf-select ng-model="uploadAppelFile.file" name="file"
-                           accept="doc/*" ngf-max-size="2MB" class="btn btn-upload">
-                    <i ng-show="uploadForm.file.$error.maxSize">File too large
-                      {{errorFile.size / 1000000|number:1}}MB: max 2M</i>
-                    <img ng-show="uploadForm.file.$valid" ngf-thumbnail="signature.file" class="thumb">
-
-                  </div>
-                  <div>
-                    <button type="submit" class="btn btn-primary">Upload Me</button>
-                    <button class="btn btn-default" ng-click="cancel()">Go Back to Main Page</button>
-                  </div><!-- /end of Top Button Row -->
-
-                </form>
-              </div>
-
-            </script>
-
-          </div>
+                <nvd3 options='barOptions' data='data'></nvd3>
+           </div>
+         </div>
+     </div>
 
         </div>
       </div>
       <!-- /.box -->
       <!-- /.col -->
     </div>
-  <script>
-    $(".hasclear").keyup(function () {
-      var t = $(this);
-      t.next('span').toggle(Boolean(t.val()));
-    });
 
-    $(".clearer").hide($(this).prev('input').val());
-
-    $(".clearer").click(function () {
-      $(this).prev('input').val('').focus();
-      $(this).hide();
-    });
-  </script>
     <!-- /.row -->
 
 

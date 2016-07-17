@@ -16,7 +16,7 @@ angular.module('appealAssistant', ['ngRoute',
     'datatables.buttons',
     'dcbClearInput',
     'angularSpinner',
-    'nvd3ChartDirectives'
+    'nvd3'
 ])
  /*
   .service('$flash', function($rootScope) {
