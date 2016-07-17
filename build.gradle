@@ -1,0 +1,153 @@
+import groovyx.net.http.RESTClient
+import groovyx.net.http.ContentType
+import groovyx.net.http.HttpResponseException
+import groovy.json.JsonOutput
+import org.apache.tools.ant.taskdefs.condition.Os
+import org.gradle.api.tasks.Exec
+
+buildscript {
+	ext {
+		springBootVersion = '1.3.1.RELEASE'
+	}
+	repositories {
+		maven {
+            url "http://xrpswpapptfb01b.hca.corpad.net:8081/artifactory/maven/"
+        }
+        maven {
+            url "http://xrpswpapptfb01b.hca.corpad.net:8081/artifactory/jcenter/"
+        }
+	}
+	dependencies {
+		classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.0.0"
+		classpath 'org.codehaus.groovy.modules.http-builder:http-builder:0.5.2'
+	}
+}
+
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'maven'
+apply plugin: 'com.jfrog.artifactory'
+apply plugin: 'maven-publish'
+
+def artifactName = 'appeal-asst-phaseone'
+
+repositories {
+	maven {
+        url "http://xrpswpapptfb01b.hca.corpad.net:8081/artifactory/maven/"
+    }
+}
+
+task wrapper(type: Wrapper) {
+	gradleVersion = '2.9'
+}
+
+task npmInstall(type: NpmTask) {
+    npmArgs = "install --force" // NPM on Windows seems to get confused over time without force.  Sigh.
+}
+
+task gruntRelease(type: GruntTask, dependsOn: ['npmInstall']) {
+   gruntArgs = "release --force"
+
+   doLast{
+       copy {
+           from "$buildDir/libs"
+           into "$buildDir/libs"
+           rename (artifactName + '.zip', artifactName + '-' + version + '.zip')
+       }
+   }
+
+}
+
+artifactory {
+    contextUrl='http://xrpswpapptfb01b.hca.corpad.net:8081/artifactory/'
+    publish {
+        repository {
+            maven = true
+        }
+        defaults {
+            publications('mavenZip')
+            publishBuildInfo = true   //Publish build-info to Artifactory (true by default)
+            publishArtifacts = true   //Publish artifacts to Artifactory (true by default)
+            publishPom = true   //Publish generated POM files to Artifactory (true by default).
+            publishIvy = false   //Publish generated Ivy descriptor files to Artifactory (true by default).
+        }
+    }
+}
+
+publishing {
+
+    publications {
+        mavenZip(MavenPublication) {
+          artifactId = artifactName
+          artifact("$buildDir/libs/${artifactId}.zip")
+    	}
+    }
+
+}
+
+task deploy() {
+    doLast {
+        assert deployUrl != null
+        assert deployJson != null
+        assert groupId != null
+
+        def client = new RESTClient(deployUrl)
+
+        def resp = null
+
+        // deploy webapp
+        try {
+            resp = client.get( path : '/v2/groups/' + groupId )
+        } catch (HttpResponseException e) {
+            if (e.getStatusCode() == 404) {
+                // deploy
+                client.setContentType(ContentType.JSON)
+
+                resp = client.post( path : '/v2/groups', body : deployJson)
+
+                assert resp.status == 201
+            }
+        }
+
+        if (resp != null) {
+            // upgrade
+            client.setContentType(ContentType.JSON)
+
+            resp = client.put( path: '/v2/groups/' + groupId, body: deployJson)
+
+            assert resp.status == 200
+        }
+
+        // TODO check deployment success
+    }
+}
+
+class NpmTask extends Exec {
+    private String npmExecutable = Os.isFamily(Os.FAMILY_WINDOWS) ? "npm.cmd" : "npm"
+    String npmArgs = ""
+
+    public NpmTask() {
+        super();
+        this.setExecutable(npmExecutable)
+    }
+
+    public void setNpmArgs(String npmArgs) {
+        this.args = "$npmArgs".trim().split(" ") as List
+    }
+}
+
+class GruntTask extends Exec {
+    private String gruntExecutable = Os.isFamily(Os.FAMILY_WINDOWS) ? "grunt.cmd" : "grunt"
+    private String switches = "--no-color"
+
+    String gruntArgs = ""
+
+    public GruntTask() {
+        super()
+        this.setExecutable(gruntExecutable)
+    }
+
+    public void setGruntArgs(String gruntArgs) {
+        this.args = "$switches $gruntArgs".trim().split(" ") as List
+    }
+}

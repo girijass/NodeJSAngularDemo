@@ -1,0 +1,42 @@
+		.sortable.grid {
+			overflow: hidden;
+		}
+		.sortable li {
+			background-color: #f4f4f4;
+			border: none;
+			border-radius:0px;
+			color: #1e345d;
+			font-weight:bold;
+			margin-left:10px;
+			margin-top:10px;
+			padding:5px;
+			padding-left:10px;
+			height: 30px;
+		}
+		.sortable.grid li {
+			line-height: 80px;
+			float: left;
+			text-align: center;
+		}
+		.sortable.connected {
+			float: left;
+		}
+		li.required {
+			border:1px solid red;
+			cursor: move;
+		}
+		li.highlight {
+			background: green;
+			cursor: move;
+		}
+		li.sortable-placeholder {
+			border: 1px dashed #f38a00;
+			border-radius:4px;
+			background: #fff;
+		}
+
+		ol.drag {
+			width:50%;
+			cursor:move;
+			padding:10px;
+		}
