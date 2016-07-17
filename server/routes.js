@@ -1,16 +1,8 @@
 'use strict';
 
 var path = require('path');
-var multipart = require('connect-multiparty');
-var multipartMiddleware = multipart();
 module.exports = function(app) {
   var api = require('./api/download.controller');
-
-  app.use('/healthcheck', require('express-healthcheck')({
-    healthy: function () {
-      return { status: 'UP' };
-    }
-  }));
   app.get('/api/getBarChartData',api.getBarChartData);
   app.get('/api/getPieChartData',api.getPieChartData);
 

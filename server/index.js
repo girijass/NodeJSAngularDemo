@@ -5,13 +5,8 @@ var app = express();
 var bodyParser = require('body-parser');
 var session = require('express-session');
 var http = require('http');
-var Authentication = require('./auth');
 var props = require('./properties');
 
-//var multipartMiddleware = multipart();
-
-var _TMPDIR = __dirname + '/tmp';
-props.setProperty('TMPDIR', _TMPDIR);
 
 app.use(session({ secret: 'i am not telling you',cookie: { secure: false }}));
 
@@ -36,7 +31,6 @@ app.use(jsonParser);
 app.use(urlencodedParser);
 app.set('appPath', 'client');
 app.use(express.static(app.get('appPath')));
-app.use('/download', express.static(props.getProperty('TMPDIR')));
 require('./routes')(app);
 
 // Server env, ip, and port

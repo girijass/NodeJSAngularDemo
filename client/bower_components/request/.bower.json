@@ -10,6 +10,5 @@
   },
   "_source": "https://github.com/mikeal/request.git",
   "_target": "^2.73.1",
-  "_originalSource": "request",
-  "_direct": true
+  "_originalSource": "request"
 }
