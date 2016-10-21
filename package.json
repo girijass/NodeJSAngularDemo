@@ -1,5 +1,5 @@
 {
-  "name": "appeal-assistant",
+  "name": "NodeJs-Demo",
   "version": "0.0.0",
   "dependencies": {
     "async": "^2.0.0-rc.3",
